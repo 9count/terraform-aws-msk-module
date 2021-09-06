@@ -5,7 +5,9 @@ resource "aws_security_group" "kafka_client_instance" {
   description = "Grants access to MSK cluster resources"
   vpc_id      = var.cluster_vpc_id
 
-  tags = merge(map("MSK Cluster", var.cluster_name), var.tags)
+  tags = merge(tomap({
+    "MSK Cluster" = var.cluster_name
+  }), var.tags)
 }
 
 resource "aws_security_group_rule" "zk_2181_ingress" {
@@ -74,7 +76,9 @@ resource "aws_iam_role" "full_msk_access" {
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.instance_assume_role_policy.json
 
-  tags = merge(map("MSK Cluster", var.cluster_name), var.tags)
+  tags = merge(tomap({
+    "MSK Cluster" = var.cluster_name
+  }), var.tags)
 }
 
 data "aws_iam_policy_document" "session_manager" {
@@ -198,7 +202,9 @@ resource "aws_cloudwatch_log_group" "instance_log_group" {
   name              = var.cwagent_log_group_name
   retention_in_days = var.cwagent_log_group_retention_period
 
-  tags = merge(map("MSK Cluster", var.cluster_name), var.tags)
+  tags = merge(tomap({
+    "MSK Cluster" = var.cluster_name
+  }), var.tags)
 }
 
 resource "aws_instance" "client_instance" {
@@ -210,5 +216,9 @@ resource "aws_instance" "client_instance" {
 
   user_data = data.template_cloudinit_config.client_instance_config.rendered
 
-  tags = merge(map("Name", "MSK-Client-Instance"), map("MSK Cluster", var.cluster_name), var.tags)
+  tags = merge(tomap({
+    "Name" = "MSK-Client-Instance"
+  }), tomap({
+    "MSK Cluster" = var.cluster_name
+  }), var.tags)
 }

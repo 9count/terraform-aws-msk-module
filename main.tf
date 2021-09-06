@@ -31,7 +31,7 @@ resource "aws_msk_cluster" "this" {
     instance_type   = local.broker_node_instance_type
     ebs_volume_size = local.broker_ebs_volume_size
     client_subnets  = local.client_subnets
-    security_groups = concat(local.security_groups, list(aws_security_group.msk_cluster.id))
+    security_groups = concat(local.security_groups, tolist([aws_security_group.msk_cluster.id]))
   }
 
   encryption_info {
