@@ -27,7 +27,7 @@ resource "aws_subnet" "public" {
   count = local.num_public_subnets
 
   vpc_id            = aws_vpc.this[0].id
-  cidr_block        = element(concat(local.public_subnets, list("")), count.index)
+  cidr_block        = element(concat(local.public_subnets, tolist([""])), count.index)
   availability_zone = element(local.availability_zones, count.index)
 
   map_public_ip_on_launch = true
@@ -41,7 +41,7 @@ resource "aws_subnet" "private" {
   count = local.num_private_subnets
 
   vpc_id            = aws_vpc.this[0].id
-  cidr_block        = element(concat(local.private_subnets, list("")), count.index)
+  cidr_block        = element(concat(local.private_subnets, tolist([""])), count.index)
   availability_zone = element(local.availability_zones, count.index)
 
   tags = merge(tomap({
