@@ -1,6 +1,6 @@
 output "id" {
   description = "The ID of the VPC created"
-  value       = element(concat(aws_vpc.this[*].id, list("")), 0)
+  value       = element(concat(aws_vpc.this[*].id, tolist([""])), 0)
   depends_on  = [aws_vpc.this]
 }
 

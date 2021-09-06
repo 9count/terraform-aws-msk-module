@@ -41,5 +41,7 @@ resource "aws_cloudwatch_metric_alarm" "msk_broker_disk_space" {
     "Broker ID"    = count.index + 1
   }
 
-  tags = merge(map("Name", local.cluster_name), var.monitoring_tags, var.tags)
+  tags = merge(tomap({
+    Name = local.cluster_name
+  }), var.monitoring_tags, var.tags)
 }

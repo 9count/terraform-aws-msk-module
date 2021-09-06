@@ -21,7 +21,7 @@ locals {
   client_subnets  = local.internal_vpc ? module.vpc.private_subnets : var.client_subnets
   security_groups = local.internal_vpc ? module.vpc.default_security_group : var.security_groups
 
-  msk_configuration_arn      = length(var.msk_configuration_arn) > 0 ? var.msk_configuration_arn : element(concat(aws_msk_configuration.this[*].arn, list("")), 0)
+  msk_configuration_arn      = length(var.msk_configuration_arn) > 0 ? var.msk_configuration_arn : element(concat(aws_msk_configuration.this[*].arn, tolist([""])), 0)
   msk_configuration_revision = local.use_custom_configuration ? var.msk_configuration_revision : 1
 
   client_broker_encryption = var.client_broker_encryption

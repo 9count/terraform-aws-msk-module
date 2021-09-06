@@ -18,29 +18,35 @@ resource "aws_vpc" "this" {
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags = merge(map("Name", local.vpc_name), var.vpc_tags, var.module_tags)
+  tags = merge(tomap({
+    Name = local.vpc_name
+  }), var.vpc_tags, var.module_tags)
 }
 
 resource "aws_subnet" "public" {
   count = local.num_public_subnets
 
   vpc_id            = aws_vpc.this[0].id
-  cidr_block        = element(concat(local.public_subnets, list("")), count.index)
+  cidr_block        = element(concat(local.public_subnets, tolist([""])), count.index)
   availability_zone = element(local.availability_zones, count.index)
 
   map_public_ip_on_launch = true
 
-  tags = merge(map("Name", format("%s-Public-%s", local.vpc_name, element(local.availability_zones, count.index))), var.vpc_tags, var.module_tags)
+  tags = merge(tomap({
+    Name = format("%s-Public-%s", local.vpc_name, element(local.availability_zones, count.index))
+  }), var.vpc_tags, var.module_tags)
 }
 
 resource "aws_subnet" "private" {
   count = local.num_private_subnets
 
   vpc_id            = aws_vpc.this[0].id
-  cidr_block        = element(concat(local.private_subnets, list("")), count.index)
+  cidr_block        = element(concat(local.private_subnets, tolist([""])), count.index)
   availability_zone = element(local.availability_zones, count.index)
 
-  tags = merge(map("Name", format("%s-Private-%s", local.vpc_name, element(local.availability_zones, count.index))), var.vpc_tags, var.module_tags)
+  tags = merge(tomap({
+    Name = format("%s-Private-%s", local.vpc_name, element(local.availability_zones, count.index))
+  }), var.vpc_tags, var.module_tags)
 }
 
 resource "aws_route_table" "public" {
@@ -48,7 +54,9 @@ resource "aws_route_table" "public" {
 
   vpc_id = aws_vpc.this[0].id
 
-  tags = merge(map("Name", format("%s-Public-%s", local.vpc_name, element(local.availability_zones, count.index))), var.vpc_tags, var.module_tags)
+  tags = merge(tomap({
+    Name = format("%s-Public-%s", local.vpc_name, element(local.availability_zones, count.index))
+  }), var.vpc_tags, var.module_tags)
 }
 
 resource "aws_route" "public_internet_gateway" {
@@ -77,7 +85,9 @@ resource "aws_route_table" "private" {
 
   vpc_id = aws_vpc.this[0].id
 
-  tags = merge(map("Name", format("%s-Private-%s", local.vpc_name, element(local.availability_zones, count.index))), var.vpc_tags, var.module_tags)
+  tags = merge(tomap({
+    Name = format("%s-Private-%s", local.vpc_name, element(local.availability_zones, count.index))
+  }), var.vpc_tags, var.module_tags)
 }
 
 resource "aws_route_table_association" "private" {
@@ -92,5 +102,7 @@ resource "aws_internet_gateway" "this" {
 
   vpc_id = aws_vpc.this[0].id
 
-  tags = merge(map("Name", format("%s", local.vpc_name)), var.vpc_tags, var.module_tags)
+  tags = merge(tomap({
+    Name = format("%s", local.vpc_name)
+  }), var.vpc_tags, var.module_tags)
 }
