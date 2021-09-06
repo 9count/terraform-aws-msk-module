@@ -89,7 +89,9 @@ resource "aws_msk_cluster" "this" {
     }
   }
 
-  tags = merge(map("Name", local.cluster_name), var.msk_cluster_tags, var.tags)
+  tags = merge(tomap({
+    Name = local.cluster_name
+  }), var.msk_cluster_tags, var.tags)
 }
 
 resource "aws_msk_configuration" "this" {
@@ -108,5 +110,7 @@ resource "aws_cloudwatch_log_group" "msk_broker_log_group" {
   name              = local.msk_broker_log_group_name
   retention_in_days = var.msk_broker_log_group_retention_period
 
-  tags = merge(map("Name", local.cluster_name), var.msk_cluster_tags, var.tags)
+  tags = merge(tomap({
+    Name = local.cluster_name
+  }), var.msk_cluster_tags, var.tags)
 }
