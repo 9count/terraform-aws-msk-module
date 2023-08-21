@@ -5,10 +5,6 @@ locals {
 module "msk" {
   source = "../../"
 
-  providers = {
-    aws = aws
-  }
-
   # MSK Feature Toggles
   create_vpc                = true
   create_msk_cluster        = true

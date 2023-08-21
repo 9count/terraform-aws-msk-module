@@ -5,10 +5,6 @@ locals {
 module "vpc" {
   source = "./modules/vpc"
 
-  providers = {
-    aws = aws
-  }
-
   create_vpc = local.internal_vpc
 
   vpc_name        = var.vpc_name

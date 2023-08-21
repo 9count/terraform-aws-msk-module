@@ -6,10 +6,6 @@ locals {
 module "msk" {
   source = "../../"
 
-  providers = {
-    aws = aws
-  }
-
   # MSK Feature Toggles
   create_vpc                = true
   create_msk_cluster        = true
@@ -25,10 +21,6 @@ module "msk" {
 
 module "client_instance" {
   source = "../../modules/client-instance"
-
-  providers = {
-    aws = aws
-  }
 
   cluster_name              = local.cluster_name
   cluster_vpc_id            = module.msk.vpc_id
