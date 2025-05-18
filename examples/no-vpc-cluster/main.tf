@@ -4,10 +4,6 @@
 module "example_no_vpc" {
   source = "../../modules/vpc"
 
-  providers = {
-    aws = aws
-  }
-
   create_vpc = "true"
 
   vpc_name        = "External-MSK-VPC"
@@ -19,10 +15,6 @@ module "example_no_vpc" {
 
 module "msk" {
   source = "../../"
-
-  providers = {
-    aws = aws
-  }
 
   # MSK Feature Toggles
   create_vpc                = false

@@ -157,25 +157,15 @@ resource "aws_iam_role_policy_attachment" "cwagent" {
 
 # EC2 Client Instance
 
-data "template_file" "session_manager" {
-  template = file("${path.module}/templates/session_manager.tpl")
-}
-
-data "template_file" "cwagent" {
-  template = file("${path.module}/templates/cwagent.tpl")
-
-  vars = {
+locals {
+  session_manager_script = templatefile("${path.module}/templates/session_manager.tpl", {})
+  cwagent_script = templatefile("${path.module}/templates/cwagent.tpl", {
     log_group_name = var.cwagent_log_group_name
-  }
-}
-
-data "template_file" "client_script" {
-  template = file("${path.module}/templates/client.tpl")
-
-  vars = {
+  })
+  client_script = templatefile("${path.module}/templates/client.tpl", {
     kafka_version      = "2.2.1"
     kafka_package_name = "kafka_2.12-2.2.1"
-  }
+  })
 }
 
 data "template_cloudinit_config" "client_instance_config" {
@@ -184,17 +174,17 @@ data "template_cloudinit_config" "client_instance_config" {
 
   part {
     content_type = "text/x-shellscript"
-    content      = data.template_file.session_manager.rendered
+    content      = local.session_manager_script
   }
 
   part {
     content_type = "text/x-shellscript"
-    content      = data.template_file.cwagent.rendered
+    content      = local.cwagent_script
   }
 
   part {
     content_type = "text/x-shellscript"
-    content      = data.template_file.client_script.rendered
+    content      = local.client_script
   }
 }
 

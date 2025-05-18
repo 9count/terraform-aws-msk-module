@@ -1,16 +1,5 @@
 data "aws_region" "current" {}
 
-data "template_file" "msk_dashboard" {
-  count = local.create_dashboard
-
-  template = file(local.dashboard_template)
-
-  vars = {
-    cluster_name = var.cluster_name
-    region       = data.aws_region.current.name
-  }
-}
-
 # Current Dashboard based on DataDog MSK Overview Dashboard
 # discussed in an article on their blog:
 #   https://www.datadoghq.com/blog/monitor-amazon-msk/
@@ -19,7 +8,10 @@ resource "aws_cloudwatch_dashboard" "msk" {
   count = local.create_dashboard
 
   dashboard_name = var.cluster_name
-  dashboard_body = data.template_file.msk_dashboard[count.index].rendered
+  dashboard_body = templatefile(local.dashboard_template, {
+    cluster_name = var.cluster_name
+    region       = data.aws_region.current.name
+  })
 }
 
 resource "aws_cloudwatch_metric_alarm" "msk_broker_disk_space" {

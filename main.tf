@@ -5,10 +5,6 @@ locals {
 module "vpc" {
   source = "./modules/vpc"
 
-  providers = {
-    aws = aws
-  }
-
   create_vpc = local.internal_vpc
 
   vpc_name        = var.vpc_name
@@ -29,7 +25,11 @@ resource "aws_msk_cluster" "this" {
 
   broker_node_group_info {
     instance_type   = local.broker_node_instance_type
-    ebs_volume_size = local.broker_ebs_volume_size
+    storage_info {
+      ebs_storage_info {
+        volume_size = local.broker_ebs_volume_size
+      }
+    }
     client_subnets  = local.client_subnets
     security_groups = concat(local.security_groups, tolist([aws_security_group.msk_cluster.id]))
   }
