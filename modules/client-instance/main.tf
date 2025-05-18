@@ -157,11 +157,11 @@ resource "aws_iam_role_policy_attachment" "cwagent" {
 
 # EC2 Client Instance
 
-data "template_file" "session_manager" {
+data "templatefile" "session_manager" {
   template = file("${path.module}/templates/session_manager.tpl")
 }
 
-data "template_file" "cwagent" {
+data "templatefile" "cwagent" {
   template = file("${path.module}/templates/cwagent.tpl")
 
   vars = {
@@ -169,7 +169,7 @@ data "template_file" "cwagent" {
   }
 }
 
-data "template_file" "client_script" {
+data "templatefile" "client_script" {
   template = file("${path.module}/templates/client.tpl")
 
   vars = {
@@ -184,17 +184,17 @@ data "template_cloudinit_config" "client_instance_config" {
 
   part {
     content_type = "text/x-shellscript"
-    content      = data.template_file.session_manager.rendered
+    content      = data.templatefile.session_manager.rendered
   }
 
   part {
     content_type = "text/x-shellscript"
-    content      = data.template_file.cwagent.rendered
+    content      = data.templatefile.cwagent.rendered
   }
 
   part {
     content_type = "text/x-shellscript"
-    content      = data.template_file.client_script.rendered
+    content      = data.templatefile.client_script.rendered
   }
 }
 

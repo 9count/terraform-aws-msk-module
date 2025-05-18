@@ -1,6 +1,6 @@
 data "aws_region" "current" {}
 
-data "template_file" "msk_dashboard" {
+data "templatefile" "msk_dashboard" {
   count = local.create_dashboard
 
   template = file(local.dashboard_template)
@@ -19,7 +19,7 @@ resource "aws_cloudwatch_dashboard" "msk" {
   count = local.create_dashboard
 
   dashboard_name = var.cluster_name
-  dashboard_body = data.template_file.msk_dashboard[count.index].rendered
+  dashboard_body = data.templatefile.msk_dashboard[count.index].rendered
 }
 
 resource "aws_cloudwatch_metric_alarm" "msk_broker_disk_space" {
